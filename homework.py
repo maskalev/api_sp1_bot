@@ -41,7 +41,7 @@ def send_message(message, bot_client):
 
 def main():
     telegram_bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = 1600000000
+    current_timestamp = int(time.time())
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s, %(levelname)s, %(name)s, '
                                '%(message)s')
