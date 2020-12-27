@@ -59,8 +59,14 @@ def get_homework_statuses(current_timestamp):
     params = {
         'from_date': current_timestamp,
     }
-    connection_error_dict = {'homeworks': [{'status': 'connection_error'}]}
-    value_error_dict = {'homeworks': [{'status': 'value_error'}]}
+    connection_error_dict = {'homeworks':
+                                 [{'status': 'connection_error',
+                                   'homework_name': 'current homework'}]
+                             }
+    value_error_dict = {'homeworks':
+                            [{'status': 'value_error',
+                              'homework_name': 'current homework'}]
+                        }
     try:
         homework_statuses = requests.get(URL, headers=headers, params=params)
         return homework_statuses.json()
