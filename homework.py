@@ -28,6 +28,9 @@ def parse_homework_status(homework):
     if homework_name is None:
         return 'У работы нет имени. Обратись к ревьюверу или куратору.'
     homework_status = homework.get('status')
+    if homework_status is None:
+        return (f'Проверь статус работы "{homework_name}" и обратись к '
+                f'ревьюверу или куратору.')
     verdicts_by_statuses = {
         'reviewing': 'Работа взята в ревью. Скоро станет известен '
                      'результат.',
@@ -35,19 +38,20 @@ def parse_homework_status(homework):
         'approved': 'Ревьюеру всё понравилось, можно приступать к '
                     'следующему уроку.',
     }
-    if verdicts_by_statuses.get(homework_status) is None:
+    verdict = verdicts_by_statuses.get(homework_status)
+    if verdict is None:
         return (f'Проверь статус работы "{homework_name}" и обратись к '
                 f'ревьюверу или куратору.')
-    verdict = verdicts_by_statuses.get(homework_status)
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
-def get_homework_statuses(current_timestamp=int(time.time())):
+def get_homework_statuses(current_timestamp):
     """
     Return json of homeworks from specified time
     :param current_timestamp: int
     :return: dict
     """
+    current_timestamp = current_timestamp or int(time.time())
     headers = {
         'Authorization': f'OAuth {PRAKTIKUM_TOKEN}',
     }
@@ -57,8 +61,11 @@ def get_homework_statuses(current_timestamp=int(time.time())):
     try:
         homework_statuses = requests.get(URL, headers=headers, params=params)
         return homework_statuses.json()
-    except (ValueError, ConnectionError):
-        return {}
+    except ConnectionError:
+        logging.error(msg='Ошибка соединения с API Практикума')
+    except ValueError:
+        logging.error(msg='Ошибка получения JSON')
+    return {}
 
 
 def send_message(message, bot_client):
