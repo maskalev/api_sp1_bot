@@ -12,6 +12,13 @@ PRAKTIKUM_TOKEN = os.getenv('PRAKTIKUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+VERDICTS_BY_STATUSES = {
+    'reviewing': 'Работа взята в ревью. Скоро станет известен '
+                 'результат.',
+    'rejected': 'К сожалению в работе нашлись ошибки.',
+    'approved': 'Ревьюеру всё понравилось, можно приступать к '
+                'следующему уроку.',
+}
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s, %(levelname)s, %(name)s, '
@@ -31,14 +38,7 @@ def parse_homework_status(homework):
     if homework_status is None:
         return (f'Проверь статус работы "{homework_name}" и обратись к '
                 f'ревьюверу или куратору.')
-    verdicts_by_statuses = {
-        'reviewing': 'Работа взята в ревью. Скоро станет известен '
-                     'результат.',
-        'rejected': 'К сожалению в работе нашлись ошибки.',
-        'approved': 'Ревьюеру всё понравилось, можно приступать к '
-                    'следующему уроку.',
-    }
-    verdict = verdicts_by_statuses.get(homework_status)
+    verdict = VERDICTS_BY_STATUSES.get(homework_status)
     if verdict is None:
         return (f'Проверь статус работы "{homework_name}" и обратись к '
                 f'ревьюверу или куратору.')
